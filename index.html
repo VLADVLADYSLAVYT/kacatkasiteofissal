@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реєстрація</title>
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            width: 350px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .container h2 {
+            color: #333333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label {
+            font-size: 14px;
+            color: #333333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .display-container {
+            background-color: #ffffff;
+            width: 300px;
+            padding: 20px;
+            margin-left: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+            color: #333333;
+        }
+        .display-container h3 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .user-info {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+        .user-info:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Форма реєстрації</h2>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="name">Ім'я</label>
+                <input type="text" id="name" placeholder="Введіть своє ім'я" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Електронна пошта</label>
+                <input type="email" id="email" placeholder="Введіть вашу пошту" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" placeholder="Введіть пароль" required>
+            </div>
+            <div class="form-group">
+                <label for="dob">Дата народження</label>
+                <input type="date" id="dob" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Номер телефону</label>
+                <input type="tel" id="phone" placeholder="Введіть ваш номер">
+            </div>
+            <div class="form-group">
+                <button type="button" onclick="submitForm()">Зареєструватися</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="display-container">
+        <h3>Інформація користувачів</h3>
+        <div id="usersList"></div>
+    </div>
+
+    <script>
+        // Функція для завантаження даних із LocalStorage при завантаженні сторінки
+        function loadUsers() {
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = ''; // Очищення перед завантаженням
+
+            const usersData = JSON.parse(localStorage.getItem('users')) || [];
+            usersData.forEach(user => {
+                const userInfo = document.createElement('div');
+                userInfo.className = 'user-info';
+                userInfo.innerHTML = `
+                    <p><strong>Ім'я:</strong> ${user.name}</p>
+                    <p><strong>Електронна пошта:</strong> ${user.email}</p>
+                    <p><strong>Пароль:</strong> ${user.password}</p>
+                    <p><strong>Дата народження:</strong> ${user.dob}</p>
+                    <p><strong>Номер телефону:</strong> ${user.phone || "Не вказано"}</p>
+                `;
+                usersList.appendChild(userInfo);
+            });
+        }
+
+        // Функція для обробки форми та збереження нових даних
+        function submitForm() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const dob = document.getElementById('dob').value;
+            const phone = document.getElementById('phone').value;
+
+            if (name && email && password && dob) {
+                const newUser = { name, email, password, dob, phone };
+                const usersData = JSON.parse(localStorage.getItem('users')) || [];
+                usersData.push(newUser); // Додавання нового користувача
+
+                localStorage.setItem('users', JSON.stringify(usersData)); // Збереження у LocalStorage
+                loadUsers(); // Оновлення відображення
+
+                document.getElementById('registrationForm').reset();
+            } else {
+                alert("Будь ласка, заповніть всі обов'язкові поля.");
+            }
+        }
+
+        // Завантаження даних при першому завантаженні сторінки
+        document.addEventListener('DOMContentLoaded', loadUsers);
+    </script>
+</body>
+</html>
+
